@@ -1,7 +1,6 @@
 # 🎨 Recon Cheatsheet – Poster Edition
 
 🧭 **Mappa mentale veloce** degli strumenti di **ricognizione**, divisa per protocolli/servizi.  
-📌 Perfetta come **poster/quick reference** durante CTF & Pentest.
 
 ---
 
@@ -100,5 +99,3 @@
 - 🌍 **DNS (53)** → dig / nslookup / dnsenum / dnsrecon  
 
 ---
-
-✨ **Tip:** stampalo o tienilo in split-screen → diventa la tua **map key** per capire subito *quale tool usare in base alla porta che Nmap ti mostra*.  
