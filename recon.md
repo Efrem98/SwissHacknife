@@ -143,6 +143,3 @@ enum4linux -S <target-ip>
 ```bash
 enum4linux -a <target-ip> | tee enum4linux.txt
 ```
-
-Dimmi quando vuoi passare il prossimo walkthrough: **aggiungerò solo ciò che non è già nel file**.
-```
