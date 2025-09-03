@@ -274,3 +274,159 @@ davtest -url http://<target-ip>/ -sendbd
 ```bash
 davtest -url http://<target-ip>/ | tee davtest.txt
 ```
+
+## 🌍 WhatWeb / WafW00f (Web Fingerprinting)
+
+**Perché usarli:**
+
+* **WhatWeb** → identifica tecnologie del sito (CMS, framework, linguaggi).
+* **WafW00f** → rileva la presenza di Web Application Firewall (WAF).
+
+### 🔹 Comandi diretti
+
+```bash
+# Fingerprinting rapido
+whatweb http://<target-ip>/
+
+# Fingerprint dettagliato con aggressività alta
+whatweb -a 3 http://<target-ip>/
+
+# Rileva WAF
+wafw00f http://<target-ip>/
+```
+
+### 💾 Salvataggio su file
+
+```bash
+whatweb http://<target-ip>/ -a 3 | tee whatweb.txt
+wafw00f http://<target-ip>/ | tee wafw00f.txt
+```
+
+---
+
+## 🌐 DNS Enumeration (dig / nslookup / dnsenum / dnsrecon)
+
+**Perché usarli:**
+Scoperta di sottodomini, record DNS, informazioni su mailserver o configurazioni nascoste.
+
+### 🔹 Comandi diretti
+
+```bash
+# Risoluzione A record
+dig A <target-domain>
+
+# Risoluzione MX (mail server)
+dig MX <target-domain>
+
+# Query diretta
+nslookup <target-domain>
+
+# Enumerazione con dnsenum
+dnsenum <target-domain>
+
+# Enumerazione con dnsrecon (bruteforce subdomains)
+dnsrecon -d <target-domain> -t brt -D /usr/share/wordlists/subdomains-top1million-5000.txt
+```
+
+### 💾 Salvataggio su file
+
+```bash
+dnsenum <target-domain> | tee dnsenum.txt
+dnsrecon -d <target-domain> -t brt -D /usr/share/wordlists/subdomains-top1million-5000.txt -o dnsrecon.txt
+```
+
+---
+
+## 📦 SMB (smbmap / CrackMapExec)
+
+**Perché usarli:**
+Alternative moderne a Enum4linux per enumerare SMB shares e utenti.
+
+### 🔹 Comandi diretti
+
+```bash
+# Lista share con smbmap
+smbmap -H <target-ip>
+
+# Lista share con autenticazione guest
+smbmap -H <target-ip> -u guest
+
+# CrackMapExec SMB scan
+crackmapexec smb <target-ip> -u '' -p ''
+```
+
+### 💾 Salvataggio su file
+
+```bash
+smbmap -H <target-ip> -u guest | tee smbmap.txt
+crackmapexec smb <target-ip> -u '' -p '' | tee cme_smb.txt
+```
+
+---
+
+## 📑 LDAP (ldapsearch)
+
+**Perché usarlo:**
+Se la porta 389 (LDAP) è aperta → enumerare directory services.
+
+### 🔹 Comandi diretti
+
+```bash
+# Query anonima base
+ldapsearch -x -H ldap://<target-ip> -s base
+
+# Dump completo con filtro utenti
+ldapsearch -x -H ldap://<target-ip> -b "dc=example,dc=com" "(objectClass=person)"
+```
+
+### 💾 Salvataggio su file
+
+```bash
+ldapsearch -x -H ldap://<target-ip> -s base | tee ldap.txt
+```
+
+---
+
+## 📡 SNMP (snmpwalk)
+
+**Perché usarlo:**
+Enumerazione dispositivi con SNMP (porta 161/udp).
+
+### 🔹 Comandi diretti
+
+```bash
+# Enumerazione base con community "public"
+snmpwalk -v2c -c public <target-ip>
+
+# Enumerazione sistema
+snmpwalk -v2c -c public <target-ip> 1.3.6.1.2.1.1.1
+```
+
+### 💾 Salvataggio su file
+
+```bash
+snmpwalk -v2c -c public <target-ip> | tee snmp.txt
+```
+
+---
+
+## 📧 SMTP (smtp-user-enum)
+
+**Perché usarlo:**
+Verifica la presenza di utenti validi su un server SMTP (porta 25/587).
+
+### 🔹 Comandi diretti
+
+```bash
+# Singolo utente
+smtp-user-enum -M VRFY -u admin -t <target-ip>
+
+# Lista utenti da wordlist
+smtp-user-enum -M VRFY -U /usr/share/wordlists/names.txt -t <target-ip>
+```
+
+### 💾 Salvataggio su file
+
+```bash
+smtp-user-enum -M VRFY -U /usr/share/wordlists/names.txt -t <target-ip> | tee smtp_enum.txt
+```
