@@ -29,7 +29,7 @@
 
 ### 2️⃣ Passwords & Cracking
 - [2 - Passwords.md](./2%20-%20Passwords.md) → Sezione dedicata al cracking password (John, Hashcat, cewl, cupp, rsmangler, crunch, pipal, Hydra, CrackMapExec, kerbrute, rainbow tables).  
-- [2 - Passwords-table.md](./2%20-%20Passwords-table.md) → Cheatsheet tabellare + poster edition dark-mode friendly.
+- [2 - Passwords-table.md](./2%20-%20Passwords-Table.md) → Cheatsheet tabellare + poster edition dark-mode friendly.
 
 ---
 
