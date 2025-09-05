@@ -34,7 +34,7 @@
 ---
 
 ### 3️⃣ File Transfer
-- [3 - Transfer.md](./3%20-%20Transfer.md) → Guida completa ai metodi di trasferimento file (SCP, Python HTTP server, Netcat, Curl/Wget, FTP, SMB, Base64).
+- [3 - Transfer.md](./3%20-%20File-Transfer.md) → Guida completa ai metodi di trasferimento file (SCP, Python HTTP server, Netcat, Curl/Wget, FTP, SMB, Base64).
 
 ---
 
