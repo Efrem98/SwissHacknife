@@ -38,6 +38,11 @@
 
 ---
 
+### 4️⃣ WordPress
+- [4 - WordPress.md](./4%20-%20WordPress.md) → WPScan, plugin/theme enum, brute force, shell upload
+
+---
+
 ## 🚀 Prossimi step
 - Creare sezioni dedicate a **Post-Exploitation** e **Privilege Escalation**.  
 - Integrare esempi pratici e workflow completi (es. *da Recon → Exploit → PrivEsc*).  
