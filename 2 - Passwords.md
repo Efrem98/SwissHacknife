@@ -91,6 +91,22 @@ john --restore=myzip
 # Vedi password crackate
 john --show zip.hash
 ```
+
+### 🔑 Cracking MD5
+
+```bash
+# Wordlist attack
+john --wordlist=rockyou.txt --format=raw-md5 md5.hash
+
+# Brute force con mask
+john --mask=?l?l?l?l?d?d --format=raw-md5 md5.hash
+
+# Mostra la password trovata
+john --show md5.hash
+```
+
+👉 `--format=raw-md5` è quello più comune per hash MD5 semplici (32 caratteri esadecimali).
+
 ---
 
 ### 📦 Estrarre gli hash (tool “*2john*”)
@@ -207,6 +223,25 @@ hashcat -m 22000 -a 3 wifi.hc22000 '?d?d?d?d?d?d?d?d'
 # Bcrypt (lento → ottimizza wordlist)
 hashcat -m 3200 -a 0 bcrypt.txt rockyou.txt -r rules/dive.rule
 ```
+### 🔑 Cracking MD5
+
+```bash
+# Dizionario
+hashcat -m 0 -a 0 md5.hash rockyou.txt
+
+# Brute force (8 caratteri alfanumerici)
+hashcat -m 0 -a 3 md5.hash ?l?l?l?l?l?l?l?l
+
+# Con regole
+hashcat -m 0 -a 0 md5.hash rockyou.txt -r rules/best64.rule
+
+# Mostra hash crackati
+hashcat -m 0 --show md5.hash
+```
+
+👉 `-m 0` = modalità MD5.
+
+---
 
 ### 💾 Comandi con salvataggio su file
 
