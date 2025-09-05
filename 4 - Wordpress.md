@@ -47,11 +47,15 @@ Strumento principale per l’enumerazione WordPress: versione, utenti, plugin, t
 # Enum base
 wpscan --url http://<target-ip> --enumerate u
 
+# Enum full scan
+wpscan --url http://ColddBoxEasy -e vp,vt,u 
+
 # Enum plugin e versioni vulnerabili
 wpscan --url http://<target-ip> --enumerate p --api-token <TOKEN>
 
 # Enum utenti + brute force password
 wpscan --url http://<target-ip> -U users.txt -P /usr/share/wordlists/rockyou.txt
+
 ```
 
 ### 💾 Salvataggio su file
