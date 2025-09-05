@@ -39,7 +39,7 @@
 ---
 
 ### 4️⃣ WordPress
-- [4 - WordPress.md](./4%20-%20WordPress.md) → WPScan, plugin/theme enum, brute force, shell upload
+- [4 - Wordpress.md](./4%20-%20Wordpress.md) → WPScan, plugin/theme enum, brute force, shell upload
 
 ---
 
