@@ -33,6 +33,12 @@
 
 ---
 
+### 3️⃣ File Transfer
+- [3 - Transfer.md](./3%20-%20Transfer.md) → Guida completa ai metodi di trasferimento file (SCP, Python HTTP server, Netcat, Curl/Wget, FTP, SMB, Base64).  
+- [3 - Transfer-Table.md](./3%20-%20Transfer-Table.md) → Cheatsheet compatto in formato tabellare (opzionale, se lo vuoi aggiungere).
+
+---
+
 ## 🚀 Prossimi step
 - Creare sezioni dedicate a **Post-Exploitation** e **Privilege Escalation**.  
 - Integrare esempi pratici e workflow completi (es. *da Recon → Exploit → PrivEsc*).  
