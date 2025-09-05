@@ -29,12 +29,12 @@
 
 ### 2️⃣ Passwords & Cracking
 - [2 - Passwords.md](./2%20-%20Passwords.md) → Sezione dedicata al cracking password (John, Hashcat, cewl, cupp, rsmangler, crunch, pipal, Hydra, CrackMapExec, kerbrute, rainbow tables).  
-- [2 - Passwords-table.md](./2%20-%20Passwords-Table.md) → Cheatsheet tabellare + poster edition dark-mode friendly.
+- [2 - Passwords-Table.md](./2%20-%20Passwords-Table.md) → Cheatsheet tabellare + poster edition dark-mode friendly.
 
 ---
 
 ### 3️⃣ File Transfer
-- [3 - Transfer.md](./3%20-%20File-Transfer.md) → Guida completa ai metodi di trasferimento file (SCP, Python HTTP server, Netcat, Curl/Wget, FTP, SMB, Base64).
+- [3 - File-Transfer.md](./3%20-%20File-Transfer.md) → Guida completa ai metodi di trasferimento file (SCP, Python HTTP server, Netcat, Curl/Wget, FTP, SMB, Base64).
 
 ---
 
