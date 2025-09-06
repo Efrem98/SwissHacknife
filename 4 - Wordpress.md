@@ -48,7 +48,7 @@ Strumento principale per l’enumerazione WordPress: versione, utenti, plugin, t
 wpscan --url http://<target-ip> --enumerate u
 
 # Enum full scan
-wpscan --url http://ColddBoxEasy -e vp,vt,u 
+wpscan --url http://<target-ip> -e vp,vt,u 
 
 # Enum plugin e versioni vulnerabili
 wpscan --url http://<target-ip> --enumerate p --api-token <TOKEN>
