@@ -29,7 +29,7 @@
 
 ### 1️⃣ Web Exploitation
 
-* [1 - Web.md](./1%20-%20Web.md) → Tecniche e tool per l’exploitation web (sqlmap, XSStrike, LFISuite, weevely3, WPScan, Droopescan, Joomscan, ysoserial, PHPGGC, tplmap, Commix, jwt\_tool, NoSQLMap, Burp Suite).
+* [1 - Web.md](./1%20-%20Web.md) → Tecniche e tool per l’exploitation web (sqlmap, XSStrike, LFISuite, weevely3, WPScan, Droopescan, Joomscan, ysoserial, PHPGGC, tplmap, Commix, jwt_tool, NoSQLMap, Burp Suite).
 * [1 - Web-Table.md](./1%20-%20Web-Table.md) → Cheatsheet compatto e visuale.
 
 ---
@@ -49,7 +49,7 @@
 
 ### 4️⃣ WordPress
 
-* [4 - Wordpress.md](./4%20-%20Wordpress.md) → WPScan, plugin/theme enum, brute force, shell upload
+* [4 - Wordpress.md](./4%20-%20Wordpress.md) → WPScan, plugin/theme enum, brute force, shell upload.
 
 ---
 
@@ -59,10 +59,14 @@
 
 ---
 
-## 🚀 Prossimi step
+### 6️⃣ Privilege Escalation
 
-* Creare sezioni dedicate a **Post-Exploitation** e **Privilege Escalation**.
-* Integrare esempi pratici e workflow completi (es. *da Recon → Exploit → PrivEsc*).
-* Aggiungere riferimenti rapidi a wordlist, tool custom e script personali.
+* [6 - PrivEsc.md](./6%20-%20PrivEsc.md) → Tecniche di escalation su **Linux** (SUID, cronjob, capabilities, kernel exploits) e **Windows** (Services, Registry, Token abuse, DLL hijacking) + risorse utili (GTFOBins, LOLBAS, HackTricks, PayloadsAllTheThings).
 
 ---
+
+## 🚀 Prossimi step
+
+* Creare sezioni dedicate a **Post-Exploitation** e **Persistence**.
+* Integrare esempi pratici e workflow completi (es. *da Recon → Exploit → PrivEsc*).
+* Aggiungere riferimenti rapidi a wordlist, tool custom e script personali.
