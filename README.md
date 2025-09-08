@@ -61,7 +61,7 @@
 
 ### 6️⃣ Privilege Escalation
 
-* [6 - PrivEsc.md](./6%20-%20PrivEsc.md) → Tecniche di escalation su **Linux** (SUID, cronjob, capabilities, kernel exploits) e **Windows** (Services, Registry, Token abuse, DLL hijacking) + risorse utili (GTFOBins, LOLBAS, HackTricks, PayloadsAllTheThings).
+* [6 - Privilege Escalation.md](./6%20-%20Privilege Escalation.md) → Tecniche di escalation su **Linux** (SUID, cronjob, capabilities, kernel exploits) e **Windows** (Services, Registry, Token abuse, DLL hijacking) + risorse utili (GTFOBins, LOLBAS, HackTricks, PayloadsAllTheThings).
 
 ---
 
