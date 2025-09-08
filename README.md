@@ -23,21 +23,18 @@
 ### 0️⃣ Recon & Discovery
 
 * [0 - Recon.md](./0%20-%20Recon.md) → Guida completa alla fase di ricognizione (Nmap, Rustscan, Gobuster, ffuf, Nikto, WhatWeb, WafW00f, davtest, Enum4linux, smbmap, CrackMapExec, MQTT, LDAP, SNMP, SMTP, DNS).
-* [0 - Recon-Table.md](./0%20-%20Recon-Table.md) → Cheatsheet tabellare e poster edition.
 
 ---
 
 ### 1️⃣ Web Exploitation
 
 * [1 - Web.md](./1%20-%20Web.md) → Tecniche e tool per l’exploitation web (sqlmap, XSStrike, LFISuite, weevely3, WPScan, Droopescan, Joomscan, ysoserial, PHPGGC, tplmap, Commix, jwt_tool, NoSQLMap, Burp Suite).
-* [1 - Web-Table.md](./1%20-%20Web-Table.md) → Cheatsheet compatto e visuale.
 
 ---
 
 ### 2️⃣ Passwords & Cracking
 
 * [2 - Passwords.md](./2%20-%20Passwords.md) → Sezione dedicata al cracking password (John, Hashcat, cewl, cupp, rsmangler, crunch, pipal, Hydra, CrackMapExec, kerbrute, rainbow tables).
-* [2 - Passwords-Table.md](./2%20-%20Passwords-Table.md) → Cheatsheet tabellare + poster edition dark-mode friendly.
 
 ---
 
