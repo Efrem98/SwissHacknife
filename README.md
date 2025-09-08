@@ -1,6 +1,10 @@
-# 🛠️ Pentest Playbook
+<h1 align="center">☣️⚙️ All Will Be One ☠️🔥</h1>
 
-> Repository personale con appunti, cheat sheet e comandi pronti per **HackTheBox**, **TryHackMe** e laboratori CTF.
+<p align="center">
+  <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExemlta3NqaHU2YWR4cXprOXJvYnU0NWdxd2dsdDZlbXF4ZjVpajNuYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iBc5SoLxZEfkXGNZ8h/giphy.gif" width="600"/>
+</p>
+
+> Repository personale con appunti, cheat sheet e comandi pronti per **HackTheBox**, **TryHackMe** e laboratori CTF.  
 > ⚠️ **Nota bene:** Tutto il materiale qui è pensato per **ambienti controllati e legali**. Non usare mai queste informazioni su sistemi reali senza autorizzazione.
 
 ---
