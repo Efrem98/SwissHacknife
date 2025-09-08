@@ -62,6 +62,18 @@
 
 ---
 
+### 7️⃣ linPEAS
+
+* [7 - linPEAS.md](./7%20-%20linPEAS.md) → Script automatizzato per enumerare potenziali vettori di privilege escalation su Linux (SUID, capabilities, cronjob, servizi, config deboli).
+
+---
+
+### 8️⃣ pspy
+
+* [8 - Pspy.md](./8%20-%20Pspy.md) → Tool per monitorare in tempo reale processi e cronjob **senza root**, utile per individuare script eseguiti come utenti privilegiati o automatismi sfruttabili.
+
+---
+
 ## 🚀 Prossimi step
 
 * Creare sezioni dedicate a **Post-Exploitation** e **Persistence**.
