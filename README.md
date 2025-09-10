@@ -74,6 +74,21 @@
 
 ---
 
+### 9️⃣ Post Exploitation
+
+* [9 - Post Exploitation.md](./9%20-%20Post%20Exploitation.md) → Evidence gathering, lateral movement (solo lab), persistence, data exfiltration (solo test). Tecniche e snippet per la fase post-sfruttamento.
+
+---
+
+### 🔟 Misc & Utility
+
+* [10 - Misc & Utility.md](./10%20-%20Misc%20&%20Utility.md) → Sezione con strumenti e risorse varie: **GTFOBins**, **LOLBAS**, **CyberChef**, regex, tldr/cheat.sh, file transfer rapidi, encoding/decoding, tunneling, OpenSSL, jq/yq, stego e molto altro.
+
+---
+
+Vuoi che ti rigeneri il README **completo aggiornato** con queste due sezioni già integrate al posto giusto, così non devi incollarle manualmente?
+
+
 ## 🚀 Prossimi step
 
 * Creare sezioni dedicate a **Post-Exploitation** e **Persistence**.
