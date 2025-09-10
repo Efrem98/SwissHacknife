@@ -86,11 +86,7 @@
 
 ---
 
-Vuoi che ti rigeneri il README **completo aggiornato** con queste due sezioni già integrate al posto giusto, così non devi incollarle manualmente?
+### 1️⃣1️⃣ Metasploit
+- [11 - Metasploit.md](./11%20-%20Metasploit.md) → Guida super dettagliata a **Metasploit**: architettura, moduli, workflow, payload, handler, msfvenom, pivoting e troubleshooting.
 
-
-## 🚀 Prossimi step
-
-* Creare sezioni dedicate a **Post-Exploitation** e **Persistence**.
-* Integrare esempi pratici e workflow completi (es. *da Recon → Exploit → PrivEsc*).
-* Aggiungere riferimenti rapidi a wordlist, tool custom e script personali.
+---
