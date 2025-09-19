@@ -69,7 +69,7 @@ gobuster dir -u http://<target-ip>/ -w /usr/share/wordlists/dirb/common.txt
 gobuster dir -u http://<target-ip>/ -w /usr/share/wordlists/dirb/common.txt -x php,txt
 
 # Ricerca con la migliore cartella per trovare cartelle 
-gobuster dir -u http://<target-ip>/ -w /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt -x php,txt
+gobuster dir -u http://<target-ip>/ -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -x php,txt
 
 # Aumentare i thread per velocizzare (attenzione ai falsi negativi)
 gobuster dir -u http://<target-ip>/ -w /usr/share/wordlists/dirb/common.txt -t 50
