@@ -251,6 +251,46 @@ ffuf -u http://<target-ip>/FUZZ -w /usr/share/wordlists/dirb/common.txt -o ffuf.
 # Salvataggio in formato CSV
 ffuf -u http://<target-ip>/FUZZ -w /usr/share/wordlists/dirb/common.txt -o ffuf.csv -of csv
 ```
+
+**Perché usarlo:**
+Se vuoi trovare sottodomini tipo `admin.example.com`, `dev.example.com` usando una wordlist (bruteforce DNS via host header), ffuf è ottimo: veloce e flessibile. Utile quando i passivi non restituiscono tutto e vuoi testare nomi “comuni” o personalizzati.
+
+**Opzioni principali (per subdomain fuzzing):**
+
+* `-u` → URL con `FUZZ` placeholder (solitamente `http://example.com/` o `http://FUZZ.example.com/`)
+* `-w` → wordlist di subdomains (es. `subdomains-top1million-5000.txt`)
+* `-H` → header custom (per il `Host:` quando necessario)
+* `-mc` → match http code (es. `200,301,302,403`)
+* `-fs` / `-fc` → filter by size/code per ridurre rumore
+* `-t` → thread
+
+### 🔹 Esempi pratici (solo output su CLI)
+
+```bash
+# Metodo A: host header (molto usato se il server risponde sempre su IP principale)
+ffuf -u http://example.com/ -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
+     -H "Host: FUZZ.example.com" -mc 200,301,302,403 -t 50
+
+# Metodo B: direct FUZZ nel subdomain (se DNS risolve i nomi testati — richiede risoluzione)
+ffuf -u http://FUZZ.example.com/ -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
+     -mc 200,301,302,403 -t 50
+
+# Metodo C: salva output in JSON per post-processing
+ffuf -u http://example.com/ -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
+     -H "Host: FUZZ.example.com" -mc 200,301,302,403 -o ffuf_subs.json -of json
+```
+
+### 🔧 Note utili / Best-practice
+
+* Se usi il **Host header** (`-H "Host: FUZZ.domain.tld"`) non è necessario che il nome sia risolvibile via DNS: il server risponderà comunque (utile per virtualhosts).
+* Se vuoi verificare la **risoluzione DNS reale** dei sottodomini trovati (Metodo B con `FUZZ.domain`), combina ffuf con `massdns`/`dnsx`/`dig` per confermare gli A/CAA/CNAME:
+
+  ```bash
+  cat ffuf_subdomains.txt | dnsx -a -resp
+  ```
+* Filtra i falsi positivi con `-fs` (filter size) o `-fc` (filter code). Esempio: se la pagina 404 ha 512 bytes, usa `-fs 512` per rimuoverla.
+* Per liste grandi, valuta un prefilter con `massdns` per evitare richieste HTTP su nomi non risolvibili (risparmi tempo).
+
 ## 📂 davtest (WebDAV Enumeration)
 
 **Perché usarlo:**
@@ -433,3 +473,39 @@ smtp-user-enum -M VRFY -U /usr/share/wordlists/names.txt -t <target-ip>
 ```bash
 smtp-user-enum -M VRFY -U /usr/share/wordlists/names.txt -t <target-ip> | tee smtp_enum.txt
 ```
+# 🔎 Sublist3r (Subdomain enumeration — *sublister*)
+
+**Perché usarlo:**
+Sublist3r è uno strumento rapido per enumerare sottodomini sfruttando motori di ricerca e vari servizi pubblici (Google, Bing, Yahoo, Twitter, VirusTotal, ecc.). Buono come primo step per raccogliere una lista “di partenza” da poi integrare con wordlist bruteforce o strumenti più completi (amass, subfinder, assetfinder).
+
+**Opzioni principali:**
+
+* `-d` → dominio target
+* `-o` → salva output su file
+* `-t` → numero di thread
+* `-v` → verbose
+
+### 🔹 Comandi diretti (solo output su CLI)
+
+```bash
+# Enum base
+sublist3r -d example.com
+
+# Con più thread (velocizza)
+sublist3r -d example.com -t 50
+
+# Salva i risultati su file
+sublist3r -d example.com -o subdomains_example.txt
+
+# Verbose + salvataggio
+sublist3r -d example.com -t 50 -v -o subdomains_example.txt
+```
+
+### 💾 Comandi con salvataggio su file
+
+```bash
+# Salva in output e poi rimuovi duplicati (utile prima di passare a ffuf/amass)
+sublist3r -d example.com -o subdomains_raw.txt
+sort -u subdomains_raw.txt > subdomains_example.txt
+```
+
